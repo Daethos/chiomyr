@@ -9,13 +9,27 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~3.1.1",
+    "@react-native-community/hooks": "^3.0.0",
+    "@types/react": "~18.2.45",
     "expo": "~50.0.5",
     "expo-status-bar": "~1.11.1",
+    "localforage": "^1.10.0",
+    "phaser": "^3.60.0",
+    "phaser-matter-collision-plugin": "^1.0.0",
+    "phaser-navmesh": "^2.3.1",
+    "phaser3-rex-plugins": "^1.60.10",
     "react": "18.2.0",
-    "react-native": "0.73.2"
+    "react-dom": "18.2.0",
+    "react-native": "0.73.2",
+    "react-native-safe-area-context": "^3.3.2",
+    "react-native-svg": "^12.1.1",
+    "react-native-web": "~0.19.6",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@types/uuid": "^9.0.8"
   },
   "private": true
 }
