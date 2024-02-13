@@ -3,6 +3,7 @@ export interface Game {
     dialog: any;
     asceanViews: string;
 
+    currentGame: boolean;
     gameTimer: number;
     gameChange: boolean;
 
@@ -31,6 +32,7 @@ export const initGame: Game = {
     dialog: {},
     asceanViews: 'Settings',
 
+    currentGame: false,
     gameTimer: 0,
     gameChange: false,
     

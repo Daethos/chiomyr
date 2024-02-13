@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { styles } from '../styles';
 
 const preferenceState = [{ 
@@ -19,9 +19,9 @@ const PreferenceCard = ({ pref, preference, setPreference, show, setShow, newAsc
     };
 
     return (
-        <View style={[styles.stdInput, styles.borderless]}>
+        <TouchableOpacity style={[styles.stdInput, styles.borderless]}>
             <Text style={styles.basicText} onPress={() => toggle()}>{pref.name.charAt(0).toUpperCase() + pref.name.slice(1)}</Text>
-        </View>
+        </TouchableOpacity>
     );
 };
 export default function Preference({ newAscean, setNewAscean }) {
@@ -33,14 +33,15 @@ export default function Preference({ newAscean, setNewAscean }) {
     }, [newAscean.preference]);
 
     return (
-        <>
+        <Text style={styles.center}>
             <Text style={[styles.header, styles.headerH1]}>Armor</Text>
             <Text>~{'\n'}</Text>
             {preferenceState.map((pref, idx) => <PreferenceCard key={idx} pref={pref} preference={preference} setPreference={setPreference} show={show} setShow={setShow} newAscean={newAscean} setNewAscean={setNewAscean} />)}
+            <Text>~{'\n'}</Text>
             { show && <View>
                 <Text style={[styles.header, styles.creatureHeadingH1, styles.gold]}>{preference.name.charAt(0).toUpperCase() + preference.name.slice(1)}</Text>
                 <Text style={[styles.basicText, styles.taper]}>{preference.description}</Text>
             </View> }
-        </>
+        </Text>
     );
-}
+};

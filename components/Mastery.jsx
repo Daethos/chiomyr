@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../styles";
 import { attributes } from "../utility/attributes";
 
@@ -12,9 +12,9 @@ function MasteryCard({ attr, attribute, setAttribute, setHighlight, show, setSho
     };
 
     return (
-        <View style={[styles.stdInput, styles.borderless]}>
+        <TouchableOpacity style={[styles.stdInput, styles.borderless]}>
             <Text style={styles.basicText} onPress={() => toggle()}>{attr.name.charAt(0).toUpperCase() + attr.name.slice(1)}</Text>
-        </View>
+        </TouchableOpacity>
     );
 };
 
@@ -26,7 +26,7 @@ export default function Mastery({ newAscean, setNewAscean }) {
         setAttribute(attributes.find((attribute) => attribute.name === newAscean.mastery));
     }, [newAscean.mastery]);
     return (
-        <>
+        <Text style={styles.center}>
             <Text style={[styles.header, styles.headerH1]}>Mastery</Text>
             <Text>~{'\n'}</Text>
             {attributes.map((attr, idx) => <MasteryCard key={idx} attr={attr} attribute={attribute} setAttribute={setAttribute} show={show} setShow={setShow} newAscean={newAscean} setNewAscean={setNewAscean} />)}
@@ -38,7 +38,8 @@ export default function Mastery({ newAscean, setNewAscean }) {
                 <Text style={[styles.basicText, styles.taper]}>{attribute.description}</Text>
                 <Text>~{'\n'}</Text>
                 <Text style={[styles.basicText, styles.gold, styles.taper]}>{attribute.gameplay}</Text>
+                <Text>~{'\n'}~{'\n'}~{'\n'}</Text>
             </View> }
-        </>
+        </Text>
     );
 };

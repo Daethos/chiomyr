@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { styles } from "../styles";
 
 const originState = [{
@@ -49,37 +49,34 @@ const originState = [{
 const OriginCard = ({ race, origin, setOrigin, show, setShow }) => {  
     function toggle() {
         setShow(race.name === origin.name && show === true ? false : true);
-        setOrigin(race);
-        console.log('toggled inside of origin:', race.name, show);
+        setOrigin(race); 
     };
 
     return (
-        <View style={[styles.border, styles.stdInput]}>
-            <Text onPress={() => toggle()}>{race.name}</Text>
-        </View>
+        <TouchableOpacity style={[styles.border, styles.stdInput, styles.borderless]}>
+            <Text onPress={() => toggle()} style={styles.cardButton}>{race.name} {'\n'}</Text>
+        </TouchableOpacity>
     );
 };
 
 export default function Origin({ newAscean, setNewAscean }) {
     const [origin, setOrigin] = useState(originState.find((origin) => origin.name === newAscean.origin));
     const [show, setShow] = useState(true);
-    useEffect(() => {
-        console.log(origin, 'Origin');
+    useEffect(() => { 
         setNewAscean({ ...newAscean, origin: origin.name });
-    }, [origin]);
-    function setRace(race) {
-        console.log('setRaced inside of origin:', race, show);
-        setOrigin(originState.find(origin => origin.name === race));
-        setShow(race !== origin.name || !show);
-        setNewAscean({...newAscean, origin: race});
-    };
+    }, [origin]); 
     return (
-        <>
+        <Text style={styles.center}>
             <Text style={[styles.header, styles.headerH1]}>Origin</Text>
+            <Text style={styles.cardBorder}>
             {originState.map((org, idx) => {
                 return <OriginCard key={idx} race={org} origin={origin} setOrigin={setOrigin} show={show} setShow={setShow} />
             })}
-            <Text>~{'\n'}~{'\n'}</Text>
+            </Text>
+            {/* <FlatList data={originState} renderItem={({ race, idx }) => {
+                <OriginCard key={idx} race={race} origin={origin} setOrigin={setOrigin} show={show} setShow={setShow} />
+            }} /> */}
+            {/* <Text>~{'\n'}~{'\n'}</Text> */}
             { show && <View style={[styles.border, styles.borderless]}>
                 <Text style={[styles.header, styles.creatureHeadingH1]}>{origin.name}</Text>
                 <Text>~{'\n'}</Text>
@@ -87,6 +84,6 @@ export default function Origin({ newAscean, setNewAscean }) {
                 <Text>~{'\n'}</Text>
                 <Text style={[styles.originBonus, styles.taper]}>Bonuses: {origin.bonus}</Text>
             </View> }
-        </>
+        </Text>
     );
 };

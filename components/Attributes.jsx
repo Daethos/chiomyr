@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { TouchableOpacity, Text, View } from "react-native";
 import { styles } from "../styles";
 import AttributeModal, { attributes } from "../utility/attributes";
 
@@ -32,11 +32,11 @@ function AttributeCard({ attr, attribute, setAttribute, setHighlight, show, setS
         <Text>~{'\n'}</Text>
         {/* <Text>~{'\n'}</Text> */}
         <View style={[styles.grid]}>
-        <Pressable onPress={(e) => handleChange(e, attr.name, -1)} style={{ display: 'inline-block' }} disabled={!floor(attr.name)}><Text style={floor(attr.name) ? styles.stdInput : { display: 'none' }}>{floor(attr.name) ? '-' : ''}</Text></Pressable>
+        <TouchableOpacity onPress={(e) => handleChange(e, attr.name, -1)} style={{ display: 'inline-block' }} disabled={!floor(attr.name)}><Text style={floor(attr.name) ? styles.stdInput : { display: 'none' }}>{floor(attr.name) ? '-' : ''}</Text></TouchableOpacity>
         <Text style={styles.gold}>{newAscean[attr.name]} ({Math.floor((newAscean[attr.name] - 10) / 2) > 0 ? '+' : ''}{Math.floor((newAscean[attr.name] - 10) / 2)})</Text>
-        <Pressable onPress={(e) => handleChange(e, attr.name, 1)} style={{ display: ceiling(attr.name) ? 'inline-block' : 'none' }}><Text style={styles.stdInput}>+</Text></Pressable>
+        <TouchableOpacity onPress={(e) => handleChange(e, attr.name, 1)} style={{ display: ceiling(attr.name) ? 'inline-block' : 'none' }}><Text style={styles.stdInput}>+</Text></TouchableOpacity>
         </View>
-        <Text>~{'\n'}</Text>
+        {/* <Text>~{'\n'}</Text> */}
         </>
     );
 };
@@ -52,14 +52,13 @@ export default function Attributes({ newAscean, setNewAscean }) {
     }, [newAscean]);
     
     return (
-        <>
+        <Text style={styles.center}>
             <Text style={[styles.header, styles.headerH1]}>
-                Attributes
-                <Text style={styles.gold}>Pool: {pool} / 25</Text>
+                Attributes <Text style={styles.gold}>Pool: {pool} / 25</Text>
             </Text>
-            <Text>~{'\n'}</Text>
+            <Text style={styles.gold}>[Click abilities to view descriptions.]{'\n'}</Text>
             {attributes.map((attr, idx) => <AttributeCard key={idx} attr={attr} attribute={attribute} setAttribute={setAttribute} setHighlight={setHighlight} show={show} setShow={setShow} newAscean={newAscean} setNewAscean={setNewAscean} pool={pool} setPool={setPool} />)}
             <AttributeModal attribute={attribute} show={show} setShow={setShow} />
-        </>
+        </Text>
     );
 };

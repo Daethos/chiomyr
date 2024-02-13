@@ -1,6 +1,5 @@
 // @refresh reset
-import { StatusBar } from 'expo-status-bar';
-import { Image, Pressable, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { Image, TouchableOpacity, SafeAreaView, ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { styles } from './styles';
 import { useEffect, useState } from 'react';
 import AsceanBuilder from './components/AsceanBuilder';
@@ -8,20 +7,90 @@ import { getAsceans, populate } from './assets/db/db';
 import { requireOrigin } from './utility/ascean';
 import { createAscean } from './models/ascean';
 import AsceanImageCard from './components/AsceanImageCard';
-import { useDeviceOrientation, useImageDimensions } from '@react-native-community/hooks';
 import HostScene from './scenes/HostScene';
+
+export const SCREENS = {
+    'CHARACTER': {
+        KEY: 'CHARACTER',
+        TEXT: 'Name',
+        PREV: null,
+        NEXT: 'ORIGIN'
+    },
+    'ORIGIN': {
+        KEY: 'ORIGIN',
+        TEXT: 'Origin',
+        PREV: 'CHARACTER',
+        NEXT: 'FAITH'
+    },
+    'FAITH': {
+        KEY: 'FAITH',
+        TEXT: 'Faith',
+        PREV: 'ORIGIN',
+        NEXT: 'ATTRIBUTES'
+    },
+    'ATTRIBUTES': {
+        KEY: 'ATTRIBUTES',
+        TEXT: 'Stats',
+        PREV: 'FAITH',
+        NEXT: 'PREFERENCE'
+    },
+    'PREFERENCE': {
+        KEY: 'PREFERENCE',
+        TEXT: 'Mastery',
+        PREV: 'ATTRIBUTES',
+        NEXT: 'COMPLETE'
+    },
+    'COMPLETE': {
+        KEY: 'COMPLETE',
+        TEXT: 'Create',
+        PREV: 'PREFERENCE',
+        NEXT: null
+    }
+};
+
+function BackForth({ id, left, right, setScreen, createCharacter, newAscean }) {
+    return (
+        <>
+            { left?.screen && <TouchableOpacity onPress={() => setScreen(left.screen)} style={[styles.stdInput, styles.bottomLeftCorner]}>
+                <Text style={[styles.basicText]}>Back ({left.text})</Text>
+            </TouchableOpacity> }
+            { right?.screen && <TouchableOpacity onPress={() => setScreen(right.screen)} style={[styles.stdInput, styles.bottomRightCorner]}>
+                <Text style={[styles.basicText]}>Next ({right.text})</Text>
+            </TouchableOpacity> }
+            { id === SCREENS.COMPLETE.KEY && (
+                <TouchableOpacity onPress={(e) => createCharacter(e, newAscean)} style={[styles.stdInput, styles.bottomRightCorner]}>
+                    <Text style={[styles.basicText]}>Create {newAscean?.name?.split(' ')[0]}</Text>
+                </TouchableOpacity>
+            ) }
+        </>
+    );
+};
 
 export default function App() {
     const [gameRunning, setGameRunning] = useState(false);
+    const [newCharacter, setNewCharacter] = useState(true);
+    const [characterCreated, setCharacterCreated] = useState(true);
     const [ascean, setAscean] = useState(null);
     const [asceans, setAsceans] = useState([]);
-    const [attributes, setAttributes] = useState({});
-    const [highlight, setHighlight] = useState('');
-    const [characterCreated, setCharacterCreated] = useState(true);
-    const [newCharacter, setNewCharacter] = useState(true);
     const [asceanPic, setAsceanPic] = useState(null);
+    const [screen, setScreen] = useState(SCREENS.COMPLETE.KEY);
+    const [newAscean, setNewAscean] = useState({
+        name: 'Garris Ashenus',
+        description: "Merchant-Knight of the Firelands",
+        origin: "Fyers",
+        sex: 'Man',
+        faith: 'Adherent',
+        mastery: 'achre',
+        preference: 'Plate-Mail',
+        constitution: 12, // 12 || 12
+        strength: 10, // 10 || 12
+        agility: 12, // 12 || 12
+        achre: 16, // 16 || 10
+        caeren: 10, // 10 || 16
+        kyosir: 13, // 13 || 11
+        hardcore: false,
+    });
 
-    // console.log(useDeviceOrientation(), window.innerHeight, window.innerWidth, 'Device Orientation and Image Dimensions');
     const toggle = () => {
         setNewCharacter(!newCharacter);
     };
@@ -44,7 +113,6 @@ export default function App() {
             const res = await getAsceans();
             if (res.length) {
                 setAsceans(res);
-                setHighlight(res[0]._id);
                 setNewCharacter(false);
             } else {
                 console.warn('No Asceans found:', res);
@@ -94,24 +162,25 @@ export default function App() {
 
     return (
         <SafeAreaView style={styles.container}>
-            { gameRunning ? (
+        { gameRunning ? (
                 <HostScene ascean={ascean} />            
-            ) : newCharacter ? ( <>
-                <AsceanBuilder createCharacter={createCharacter} /> 
-                <Pressable onPress={() => toggle()} style={[styles.stdInput, styles.corner]}>
+        ) : newCharacter === true ? ( <>
+                <AsceanBuilder screen={screen} newAscean={newAscean} setNewAscean={setNewAscean} /> 
+                <TouchableOpacity onPress={() => toggle()} style={[styles.stdInput, styles.corner]}>
                     <Text style={styles.basicText}>Back</Text>
-                </Pressable>     
-            </>
-            ) : asceans.length > 0 ? (
-               <ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', justifyContent: 'center'}} style={styles.scrollView}>
+                </TouchableOpacity>     
+                <BackForth id={SCREENS[screen]?.KEY} left={{ screen: SCREENS[screen]?.PREV, text: SCREENS[SCREENS[screen]?.PREV]?.TEXT }} right={{ screen: SCREENS[screen]?.NEXT, text: SCREENS[SCREENS[screen]?.NEXT]?.TEXT }} 
+                    setScreen={setScreen} createCharacter={createCharacter} newAscean={newAscean} />
+        </> ) : asceans.length > 0 ? (
+            <ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', justifyContent: 'center'}} style={styles.scrollView}>
                 {asceans.map((asc, idx) => { 
                     const newPic = requireOrigin(asc.origin, asc.sex);
                     return <View key={idx} style={[styles.border, { width: '85%', marginTop: '1em' }]}>
                         {ascean ? ( <>
                             <Text style={[styles.header, styles.creatureHeadingH1]}>{asc.name}</Text>
-                            <Pressable onPress={() => populateAscean(asc)} style={[styles.stdInput, styles.border]}>
+                            <TouchableOpacity onPress={() => populateAscean(asc)} style={[styles.stdInput, styles.border]}>
                                 <Text style={styles.basicText}>Select {asc.name}</Text>
-                            </Pressable>
+                            </TouchableOpacity>
                         </> ) : ( <>
                             <Text style={[styles.header, styles.creatureHeadingH1]}>{asc.name}</Text>
                             <Text style={[styles.creatureHeadingH2, asc.description.toString().length > 45 ? styles.wrap : {}]}>{asc.description}</Text>
@@ -119,9 +188,9 @@ export default function App() {
                             <Image source={newPic} style={styles.originPic} />
                             <Text style={styles.gold}>Level: {asc.level}</Text>
                             <Text style={[styles.gold]}>Experience: {asc.experience}</Text>
-                            <Pressable onPress={() => populateAscean(asc)} style={[styles.stdInput, styles.border]}>
+                            <TouchableOpacity onPress={() => populateAscean(asc)} style={[styles.stdInput, styles.border]}>
                                 <Text style={styles.basicText}>Select {asc.name}</Text>
-                            </Pressable>
+                            </TouchableOpacity>
                         </> )}
                     </View> 
                 })}
@@ -136,24 +205,28 @@ export default function App() {
                     <Text>~{'\n'}</Text>
                     <AsceanImageCard ascean={ascean} />
                     <Text>~{'\n'}~{'\n'}</Text>
-                    <Pressable onPress={() => toggle()} style={[styles.stdInput, styles.bottomLeftCorner, { backgroundColor: 'red' }]}>
+                    <TouchableOpacity onPress={() => toggle()} style={[styles.stdInput, styles.bottomLeftCorner, { backgroundColor: 'red' }]}>
                         <Text style={styles.basicText}>Delete!!</Text>
-                    </Pressable>
-                    <Pressable onPress={() => startGame()} style={[styles.stdInput, styles.bottomRightCorner, { backgroundColor: 'green' }]}>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => startGame()} style={[styles.stdInput, styles.bottomRightCorner, { backgroundColor: 'green' }]}>
                         <Text style={styles.basicText}>Enter Game</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View> : null}
                 { asceans.length < 3 ? (
-                <Pressable onPress={() => toggle()} style={[styles.stdInput, styles.corner]}>
-                    <Text style={styles.basicText}>Create Character</Text>
-                </Pressable>
+                <>
+                    <ActivityIndicator style={styles.topLeftCorner} size="large" color="#0000ff" />
+                    <TouchableOpacity onPress={() => toggle()} style={[styles.stdInput, styles.corner]}>
+                        <Text style={styles.basicText}>Create Character</Text>
+                    </TouchableOpacity>
+                </>
                 ) : null }
-                </ScrollView> ) : <>
-                <Text style={styles.header} onPress={() => console.log('Clicked the Text')}>The Ascean</Text>
-                    <Pressable onPress={() => toggle()} style={styles.stdInput}>
-                    <Text style={styles.basicText}>Create Character</Text>
-                </Pressable> 
-            </> }
+            </ScrollView> 
+        ) : ( <>
+            <Text style={styles.header}>The Ascean</Text>
+            <TouchableOpacity onPress={() => toggle()} style={styles.stdInput}>
+                <Text style={styles.basicText}>Create Character</Text>
+            </TouchableOpacity> 
+        </> ) }
         </SafeAreaView>
     );
 };
