@@ -6,12 +6,14 @@ export interface Game {
     currentGame: boolean;
     gameTimer: number;
     gameChange: boolean;
+    staminaPercentage: number;
 
     instantStatus: boolean;
     selectedPrayerIndex: number;
     selectedDamageTypeIndex: number;
     selectedWeaponIndex: number;
     selectedHighlight: string;
+    scrollEnabled: boolean;
 
     showDialog: boolean;
     showInventory: boolean;
@@ -35,12 +37,14 @@ export const initGame: Game = {
     currentGame: false,
     gameTimer: 0,
     gameChange: false,
+    staminaPercentage: 0,
     
     instantStatus: false,
     selectedPrayerIndex: 0,
     selectedDamageTypeIndex: 0,
     selectedWeaponIndex: 0,
     selectedHighlight: 'Weapon',
+    scrollEnabled: false,
 
     showDialog: false,
     showInventory: false,

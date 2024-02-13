@@ -112,6 +112,7 @@ export default function App() {
             setCharacterCreated(false);
             const res = await getAsceans();
             if (res.length) {
+                await populateAscean(res[0]);
                 setAsceans(res);
                 setNewCharacter(false);
             } else {
@@ -165,18 +166,19 @@ export default function App() {
         { gameRunning ? (
                 <HostScene ascean={ascean} />            
         ) : newCharacter === true ? ( <>
-                <AsceanBuilder screen={screen} newAscean={newAscean} setNewAscean={setNewAscean} /> 
+                <AsceanBuilder screen={screen} newAscean={newAscean} setNewAscean={setNewAscean} />
+                <Text style={[styles.topLeftCorner, styles.title]}>The Ascean <Text style={styles.superscript}>TM</Text></Text> 
                 <TouchableOpacity onPress={() => toggle()} style={[styles.stdInput, styles.corner]}>
                     <Text style={styles.basicText}>Back</Text>
                 </TouchableOpacity>     
                 <BackForth id={SCREENS[screen]?.KEY} left={{ screen: SCREENS[screen]?.PREV, text: SCREENS[SCREENS[screen]?.PREV]?.TEXT }} right={{ screen: SCREENS[screen]?.NEXT, text: SCREENS[SCREENS[screen]?.NEXT]?.TEXT }} 
                     setScreen={setScreen} createCharacter={createCharacter} newAscean={newAscean} />
         </> ) : asceans.length > 0 ? (
-            <ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', justifyContent: 'center'}} style={styles.scrollView}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center'}} style={styles.scrollView}>
                 {asceans.map((asc, idx) => { 
                     const newPic = requireOrigin(asc.origin, asc.sex);
                     return <View key={idx} style={[styles.border, { width: '85%', marginTop: '1em' }]}>
-                        {ascean ? ( <>
+                        { ascean ? ( <>
                             <Text style={[styles.header, styles.creatureHeadingH1]}>{asc.name}</Text>
                             <TouchableOpacity onPress={() => populateAscean(asc)} style={[styles.stdInput, styles.border]}>
                                 <Text style={styles.basicText}>Select {asc.name}</Text>
@@ -214,7 +216,8 @@ export default function App() {
                 </View> : null}
                 { asceans.length < 3 ? (
                 <>
-                    <ActivityIndicator style={styles.topLeftCorner} size="large" color="#0000ff" />
+                    <Text style={[styles.topLeftCorner, styles.title]}>The Ascean <Text style={styles.superscript}>TM</Text></Text>     
+                    {/* <ActivityIndicator style={styles.topLeftCorner} size="large" color="#0000ff" /> */}
                     <TouchableOpacity onPress={() => toggle()} style={[styles.stdInput, styles.corner]}>
                         <Text style={styles.basicText}>Create Character</Text>
                     </TouchableOpacity>

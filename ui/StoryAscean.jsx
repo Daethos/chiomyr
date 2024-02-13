@@ -1,17 +1,17 @@
 // import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard';
+import { useEffect, useState } from 'react';
 import AsceanImageCard from '../components/AsceanImageCard';
 import AttributeModal, { AttributeCompiler } from '../utility/attributes';
 import ItemModal from '../components/ItemModal';
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from '../styles';
 import { Combat } from '../stores/combat';
+import statPng from '../assets/gui/newStats.png';
 
 // import StoryHealthBar from './StoryHealthBar';
 // import LevelUpModal from '../../components/GameCompiler/LevelUpModal';
 // import ExperienceBar from '../../components/GameCompiler/ExperienceBar';
-import { useEffect, useState } from 'react';
 // import PhaserInventoryBag from './PhaserInventoryBag';
-import statPng from '../../game/images/newStats.png';
 // import Inventory from '../../components/GameCompiler/Inventory';
 // import Firewater from '../../components/GameCompiler/Firewater';
 // import { getOnlyInventoryFetch, setShakeDuration, setShakeIntensity, setTutorialContent, setVibrationTime, setVolume } from '../reducers/gameState';
@@ -47,12 +47,19 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
     // const gameState = useSelector((state) => state.game);
     // const state = useSelector((state) => state.combat) as Combat;
     const [savingInventory, setSavingInventory] = useState(false);
-    const [currentSetting, setCurrentSetting] = useState<string>('Control');
+    const [currentSetting, setCurrentSetting] = useState('Control');
     const [currentCharacter, setCurrentCharacter] = useState('Statistics');
-    const [playerTraitWrapper, setPlayerTraitWrapper] = useState<any>({});
+    // const [playerTraitWrapper, setPlayerTraitWrapper] = useState({});
     const [dragAndDropInventory, setDragAndDropInventory] = useState(ascean.inventory);
     const [highlighted, setHighlighted] = useState({ item: null, comparing: false });
-    const [show, setShow] = useState(false);
+    // const [show, setShow] = useState(false);
+
+    useEffect(() => {
+        console.log(ascean, 'Ascean');
+        console.log(asceanState, 'AsceanState');
+        console.log(gameState, 'GameState');
+        console.log(combatState, 'CombatState');
+    }, []);
 
     // useEffect(() => {
     //     playerTraits();
@@ -79,6 +86,7 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
             setSavingInventory(true);
             const flattenedInventory = inventory.map((item) => item?._id);
             const data = { ascean: ascean._id, inventory: flattenedInventory };
+            console.log(data, "saveInventory Data")
             // await asceanAPI.saveAsceanInventory(data);
             // dispatch(getOnlyInventoryFetch(ascean._id));
             setSavingInventory(false);
@@ -325,9 +333,7 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
         <img src ={statPng} alt="Player Portrait" style={{ position: "absolute" }} />
         { asceanViews === VIEWS.CHARACTER ? (
             <>
-            <Text style={styles.storyMenuHeading}>
-            Character
-            </Text>
+            <Text style={styles.storyMenuHeading}>Character</Text>
             <select value={currentCharacter} onChange={handleCharacterChange} style={{ position: "absolute", width: "25%", left: "67.5%", top: "11%", background: "black", color: "#fdf6d8", borderColor: "#fdf6d8", textAlign: "center", paddingRight: '0.75rem' }}>
                 <option value="Statistics">Statistics</option>
                 <option value="Traits">Traits</option> 
@@ -335,11 +341,9 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
             </>
         ) : asceanViews === VIEWS.INVENTORY ? (
             <>
-            <Text style={styles.storyMenuHeading}>
-            Inventory
-            </Text> 
+            <Text style={styles.storyMenuHeading}>Inventory</Text> 
             {/* <Firewater /> */}
-            <div style={styles.storySaveInventoryOuter}>
+            <View style={styles.storySaveInventoryOuter}>
                 <TouchableOpacity onPress={() => saveInventory(dragAndDropInventory)} style={styles.storySaveInventory}>
                 { savingInventory ? ( 
                     <ActivityIndicator style={styles.center} size='large' color='#0000FF' /> 
@@ -349,13 +353,11 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
                     </svg>
                 ) }
                 </TouchableOpacity>
-            </div>
+            </View>
             </>
         ) : asceanViews === VIEWS.SETTINGS ? (
             <>
-            <Text style={styles.storyMenuHeading}>
-                Settings
-            </Text>
+            <Text style={styles.storyMenuHeading}>Settings</Text>
             <select value={currentSetting} onChange={handleSettingChange} style={{ position: "absolute", width: "25%", left: "67.5%", top: "11%", background: "black", color: "#fdf6d8", borderColor: "#fdf6d8", textAlign: "center", paddingRight: '0.75rem' }}>
                 <option value="Actions">Actions</option> 
                 <option value="Control">Control</option>
@@ -386,12 +388,12 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
                     <img src={combatState.player.imgUrl} style={styles.originPic} />
                     <Text style={[styles.gold, styles.creatureHeadingH2]}>{combatState.player.description}</Text>
                     <View style={styles.propertyBlock}>
-                        Level: <Text style={{ color: "gold" }}>{combatState.player.level}</Text>{'\n'}
-                        {ascean.currency?.silver ? <>Silver: <Text style={{ color: "gold" }}>{ascean.currency.silver}</Text> Gold: <Text style={{ color: "gold" }}>{ascean.currency.gold} {'\n'}</Text></> : '' }
-                        Mastery: <Text style={{ color: "gold" }}>{combatState.player.mastery}</Text>{'\n'}
-                        Magical Defense: <Text style={{ color: "gold" }}>{combatState.playerDefense.magicalDefenseModifier}% / [{combatState.playerDefense.magicalPosture}%]</Text>{'\n'}
-                        Physical Defense: <Text style={{ color: "gold" }}>{combatState.playerDefense.physicalDefenseModifier}% / [{combatState.playerDefense.physicalPosture}%]</Text>{'\n'}
-                        Initiative: <Text style={{ color: "gold" }}>{combatState.playerAttributes.initiative}</Text>
+                        <Text style={styles.basicText}>Level: <Text style={styles.gold}>{combatState.player.level}</Text>{'\n'}</Text>
+                        {ascean.currency?.silver ? <Text style={styles.basicTexet}>Silver: <Text style={styles.gold}>{ascean.currency.silver}</Text> Gold: <Text style={styles.gold}>{ascean.currency.gold} {'\n'}</Text></Text> : '' }
+                        <Text style={styles.basicText}>Mastery: <Text style={styles.gold}>{combatState.player.mastery}</Text>{'\n'}</Text>
+                        <Text style={styles.basicText}>Magical Defense: <Text style={styles.gold}>{combatState.playerDefense.magicalDefenseModifier}% / [{combatState.playerDefense.magicalPosture}%]</Text>{'\n'}</Text>
+                        <Text style={styles.basicText}>Physical Defense: <Text style={styles.gold}>{combatState.playerDefense.physicalDefenseModifier}% / [{combatState.playerDefense.physicalPosture}%]</Text>{'\n'}</Text>
+                        <Text style={styles.basicText}>Initiative: <Text style={styles.gold}>{combatState.playerAttributes.initiative}</Text></Text>
                     </View>
                     <AttributeCompiler ascean={combatState.player} />
                 </View>

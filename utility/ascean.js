@@ -413,6 +413,24 @@ const asceanCompiler = (ascean) => {
             originMagDef: originMagDefMod
         };
 
+        if (ascean.health.max === 0) {
+            ascean = { 
+                ...ascean,
+                health: {
+                    current: attributes.healthTotal,
+                    max: attributes.healthTotal
+                }};
+            // ascean.health.current = attributes.healthTotal;
+        };
+        ascean = {
+            ...ascean,
+            health: {
+                current: ascean.health.current,
+                max: attributes.healthTotal
+            }
+        };
+        // ascean.health.max = attributes.healthTotal;
+
         const combatWeaponOne = weaponCompiler(ascean.weaponOne, ascean, attributes, combatStats, rarities.weaponOne);
         const combatWeaponTwo = weaponCompiler(ascean.weaponTwo, ascean, attributes, combatStats, rarities.weaponTwo);
         const combatWeaponThree = weaponCompiler(ascean.weaponThree, ascean, attributes, combatStats, rarities.weaponThree);

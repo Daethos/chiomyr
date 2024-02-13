@@ -22,7 +22,7 @@ export default function AsceanBuilder({ screen, newAscean, setNewAscean }) {
     }, [newAscean.origin, newAscean.sex]);
 
     return (
-    <ScrollView style={[styles.statBlock, styles.statBlockWide]} >
+        <ScrollView style={[styles.statBlock, styles.statBlockWide, { maxHeight: '85%', maxWidth: '85%' }]} >
             <Preview newAscean={newAscean} asceanPic={asceanPic} />
             { screen === SCREENS.CHARACTER.KEY ? (
                 <>
