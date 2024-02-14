@@ -102,9 +102,11 @@ const HostScene = ({ ascean }) => {
         const update = async () => {
             try {
                 const inventory = await getInventory(ascean._id);
+                console.log(inventory, 'Inventory', ascean, 'Ascean');
                 setGameState({
                     ...gameState,
-                    ascean: { ...ascean, inventory: inventory }
+                    ascean: ascean, 
+                    inventory: inventory 
                 });
             } catch (err) {
                 console.log(err.message, 'Error Updating Inventory');
@@ -279,6 +281,8 @@ const HostScene = ({ ascean }) => {
     // usePhaserEvent('show-dialog', showDialog);
     // usePhaserEvent('interacting-loot', interactingLoot);
     usePhaserEvent('launch-game', launchGame);
+    usePhaserEvent('update-caerenic', (e) => setCombat({ ...combat, isCaerenic: e }));
+    usePhaserEvent('update-stalwart', (e) => setCombat({ ...combat, isStalwart: e }));
     // usePhaserEvent('stealth', (e) => dispatch(setStealth(e)));
     usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-combat-timer', updateCombatTimer);
@@ -290,39 +294,37 @@ const HostScene = ({ ascean }) => {
  
     return (
         <SafeAreaView style={styles.storyGame}>
-            { gameState.currentGame && gameRef.current && ( 
-                <> 
-                {/* <SmallHud ascean={gameState.player} dialogTag={gameState.dialogTag} />
-                { gameState.scrollEnabled && (
-                    <CombatMouseSettings damageType={combat.weapons[0].damage_type} weapons={combat.weapons.filter((weapon) => weapon?.name !== 'Empty Weapon Slot')} />
-                ) } */}
-                { gameState.showPlayer ? (  
-                    <StoryAscean ascean={gameState.player} asceanViews={gameState.asceanViews} restartGame={restartGame} asceanState={{}} gameState={gameState} combatState={combat} />
-                ) : ( 
-                    <div style={{ position: "absolute", zIndex: 1 }}>
-                        <CombatUI state={combat} staminaPercentage={staminaPercentage} pauseState={gameState.pauseState} stamina={stamina} stealth={false} />
-                        {/* { combat.combatEngaged && (
-                            <div style={{ position: "absolute", top: "420px", left: "250px", zIndex: 0 }}>
-                                <PhaserCombatText />
-                            </div>
-                        ) } 
-                        { combat.computer && (
-                            <EnemyUI pauseState={gameState.pauseState} />
-                        ) } */}
-                    </div>
-                ) }
-                {/* { gameState.showDialog && gameState.dialogTag && (   
-                    <StoryDialog state={combat} deleteEquipment={deleteEquipment} />
-                ) }
-                { gameState?.lootDrops.length > 0 && gameState?.showLoot && (
-                    <LootDropUI gameState={gameState} />   
-                ) }
-                { gameState.tutorial && ( 
-                    // // <StoryTutorial tutorial={gameState.tutorial} dispatch={dispatch} player={gameState.player}  /> 
-                ) } */}
-                </> 
+        { gameState.currentGame && gameRef.current && ( <> 
+            {/* <SmallHud ascean={gameState.player} dialogTag={gameState.dialogTag} />
+            { gameState.scrollEnabled && (
+                <CombatMouseSettings damageType={combat.weapons[0].damage_type} weapons={combat.weapons.filter((weapon) => weapon?.name !== 'Empty Weapon Slot')} />
+            ) } */}
+            { gameState.showPlayer ? (  
+                <StoryAscean ascean={ascean} asceanViews={gameState.asceanViews} restartGame={restartGame} asceanState={{}} gameState={gameState} combatState={combat} setGameState={setGameState} />
+            ) : ( 
+                <View style={{ position: "absolute", zIndex: 1 }}>
+                    <CombatUI state={combat} staminaPercentage={staminaPercentage} pauseState={gameState.pauseState} stamina={stamina} stealth={false} gameState={gameState} setGameState={setGameState} />
+                    {/* { combat.combatEngaged && (
+                        <div style={{ position: "absolute", top: "420px", left: "250px", zIndex: 0 }}>
+                            <PhaserCombatText />
+                        </div>
+                    ) } 
+                    { combat.computer && (
+                        <EnemyUI pauseState={gameState.pauseState} />
+                    ) } */}
+                </View>
             ) }
-            <div id='story-game' ref={gameRef}></div>
+            {/* { gameState.showDialog && gameState.dialogTag && (   
+                <StoryDialog state={combat} deleteEquipment={deleteEquipment} />
+            ) }
+            { gameState?.lootDrops.length > 0 && gameState?.showLoot && (
+                <LootDropUI gameState={gameState} />   
+            ) }
+            { gameState.tutorial && ( 
+                // // <StoryTutorial tutorial={gameState.tutorial} dispatch={dispatch} player={gameState.player}  /> 
+            ) } */}
+        </> ) }
+        <div id='story-game' ref={gameRef}></div>
         </SafeAreaView>
     );
 };

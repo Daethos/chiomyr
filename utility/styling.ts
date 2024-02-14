@@ -43,4 +43,14 @@ const borderColor = (prayer: string) => {
     };
 };
 
-export { getRarityColor, getShadowColor, borderColor }
+const itemStyle = (rarity: string) => {
+    return {
+        borderColor: getRarityColor(rarity),
+        backgroundColor: 'black',
+        boxShadow: '0.05em 0.05em 0.05em black',
+        borderWidth: '0.15em',
+        marginBottom: '0.5em',
+    };
+};
+
+export { getRarityColor, getShadowColor, borderColor, itemStyle };

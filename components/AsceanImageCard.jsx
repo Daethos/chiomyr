@@ -5,7 +5,7 @@ import { styles } from '../styles';
 import ItemModal from './ItemModal';
 import { AttributeCompiler } from '../utility/attributes';
 
-export default function AsceanImageCard({ ascean }) { 
+export default function AsceanImageCard({ ascean, weaponOne, weaponTwo, weaponThree }) { 
 
     const [equipment, setEquipment] = useState(null);
     const [show, setShow] = useState(false);
@@ -27,14 +27,14 @@ export default function AsceanImageCard({ ascean }) {
         <AttributeCompiler ascean={ascean} />
         <View style={styles.imageCardGrid}>
             <View style={styles.imageCardLeft}>
-                <Pressable onPress={() =>info(ascean.weaponOne)} style={itemStyle(ascean.weaponOne.rarity)}>
-                    <img src={ascean.weaponOne.imgUrl} />
+                <Pressable onPress={() =>info(weaponOne)} style={itemStyle(weaponOne.rarity)}>
+                    <img src={weaponOne.imgUrl} />
                 </Pressable>
-                <Pressable onPress={() =>info(ascean.weaponTwo)} style={itemStyle(ascean.weaponTwo.rarity)}>
-                    <img src={ascean.weaponTwo.imgUrl}  />
+                <Pressable onPress={() =>info(weaponTwo)} style={itemStyle(weaponTwo.rarity)}>
+                    <img src={weaponTwo.imgUrl}  />
                 </Pressable>
-                <Pressable onPress={() =>info(ascean.weaponThree)} style={itemStyle(ascean.weaponThree.rarity)}>
-                    <img src={ascean.weaponThree.imgUrl} />
+                <Pressable onPress={() =>info(weaponThree)} style={itemStyle(weaponThree.rarity)}>
+                    <img src={weaponThree.imgUrl} />
                 </Pressable>
                 <Pressable onPress={() =>info(ascean.shield)} style={itemStyle(ascean.shield.rarity)}>
                     <img src={ascean.shield.imgUrl} />

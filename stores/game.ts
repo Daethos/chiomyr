@@ -19,6 +19,7 @@ export interface Game {
     showInventory: boolean;
     showLoot: boolean;
 
+    inventory: any[];
     lootDrops: any[];
     merchantEquipment: any[];
     showLootIds: any[];
@@ -50,6 +51,7 @@ export const initGame: Game = {
     showInventory: false,
     showLoot: false,
 
+    inventory: [],
     lootDrops: [],
     merchantEquipment: [],
     showLootIds: [],

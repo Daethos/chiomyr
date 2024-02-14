@@ -25,7 +25,7 @@ export const config = {
         // mode: Phaser.Scale.FIT,
         // autoCenter: Phaser.Scale.CENTER_BOTH,
         width: '100%',
-        height: '100%',
+        height: '99.5%',
      },
     physics: {
         default: 'matter',

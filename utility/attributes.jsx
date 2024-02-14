@@ -2,6 +2,7 @@ import { Modal, Text, TouchableHighlight, View } from 'react-native';
 import { styles } from '../styles';
 import { useEffect, useState } from 'react';
 import { asceanCompiler } from './ascean';
+import { useDeviceOrientation } from '@react-native-community/hooks';
 
 export const attributes = [{
     name: 'constitution',
@@ -36,9 +37,12 @@ export const attributes = [{
 }];
 
 export default function AttributeModal({ attribute, show, setShow }) {
+    const orientation = useDeviceOrientation();
     return (
         <Modal animationType="fade" transparent={true} visible={show} onRequestClose={() => setShow(!show)}>
-            <TouchableHighlight onPress={() => setShow(!show)} style={[styles.border, styles.popover]}>
+            <TouchableHighlight onPress={() => setShow(!show)} 
+                style={[styles.border, styles.popover, 
+                { maxWidth: orientation === 'landscape' ? '50%' : '70%', maxHeight: orientation === 'landscape' ? '75%' : '50%' }]}>
             <View>
                 <Text style={[styles.header, styles.creatureHeadingH1, styles.gold]}>{attribute.name.charAt(0).toUpperCase() + attribute.name.slice(1)}</Text>
                 <Text>~{'\n'}</Text>

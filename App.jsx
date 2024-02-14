@@ -167,7 +167,7 @@ export default function App() {
                 <HostScene ascean={ascean} />            
         ) : newCharacter === true ? ( <>
                 <AsceanBuilder screen={screen} newAscean={newAscean} setNewAscean={setNewAscean} />
-                <Text style={[styles.topLeftCorner, styles.title]}>The Ascean <Text style={styles.superscript}>TM</Text></Text> 
+                {/* <Text style={[styles.topLeftCorner, styles.title]}>The Ascean <Text style={styles.superscript}>TM</Text></Text>  */}
                 <TouchableOpacity onPress={() => toggle()} style={[styles.stdInput, styles.corner]}>
                     <Text style={styles.basicText}>Back</Text>
                 </TouchableOpacity>     
@@ -205,7 +205,7 @@ export default function App() {
                     <Text style={[styles.basicText, styles.gold]}>Level: {ascean.level}</Text>
                     <Text style={[styles.basicText, styles.gold]}>Experience: {ascean.experience}</Text>
                     <Text>~{'\n'}</Text>
-                    <AsceanImageCard ascean={ascean} />
+                    <AsceanImageCard ascean={ascean} weaponOne={ascean.weaponOne} weaponTwo={ascean.weaponTwo} weaponThree={ascean.weaponThree} />
                     <Text>~{'\n'}~{'\n'}</Text>
                     <TouchableOpacity onPress={() => toggle()} style={[styles.stdInput, styles.bottomLeftCorner, { backgroundColor: 'red' }]}>
                         <Text style={styles.basicText}>Delete!!</Text>
@@ -216,7 +216,7 @@ export default function App() {
                 </View> : null}
                 { asceans.length < 3 ? (
                 <>
-                    <Text style={[styles.topLeftCorner, styles.title]}>The Ascean <Text style={styles.superscript}>TM</Text></Text>     
+                    {/* <Text style={[styles.topLeftCorner, styles.title]}>The Ascean <Text style={styles.superscript}>TM</Text></Text>      */}
                     {/* <ActivityIndicator style={styles.topLeftCorner} size="large" color="#0000ff" /> */}
                     <TouchableOpacity onPress={() => toggle()} style={[styles.stdInput, styles.corner]}>
                         <Text style={styles.basicText}>Create Character</Text>

@@ -177,7 +177,7 @@ export default class Play extends Phaser.Scene {
 
         // =========================== FPS =========================== \\
 
-        this.fpsText = this.add.text(window.innerWidth / 2 - 24, window.innerHeight / 128, 'FPS: ', { font: '16px Cinzel', fill: '#fdf6d8' });
+        this.fpsText = this.add.text(window.innerWidth / 2 - 32, window.innerHeight / 1.05, 'FPS: ', { font: '16px Cinzel', fill: '#fdf6d8' });
         this.fpsText.setScrollFactor(0);
     };
 
@@ -323,12 +323,14 @@ export default class Play extends Phaser.Scene {
 
     caerenic = (bool) => {
         console.log('caerenic called:', bool);
+        EventEmitter.emit('update-caerenic', bool);
         // this.dispatch(setCaerenic(bool));
-    } 
+    } ;
     stalwart = (bool) => {
         console.log('stalwart called:', bool);
+        EventEmitter.emit('update-stalwart', bool);
         // this.dispatch(setStalwart(bool));
-    } 
+    } ;
     useStamina = (value) => EventEmitter.emit('update-stamina', value);
 
     createTextBorder(text) {

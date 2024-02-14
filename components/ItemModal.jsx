@@ -1,4 +1,4 @@
-import { Modal, Text, TouchableHighlight, View } from "react-native"
+import { Modal, Text, TouchableOpacity, View } from "react-native"
 import { styles } from "../styles"
 import { getRarityColor } from "../utility/styling"
 import { useDeviceOrientation } from '@react-native-community/hooks';
@@ -11,12 +11,11 @@ export default function ItemModal({ item, show, setShow, stalwart, caerenic }) {
     const orientation = useDeviceOrientation();
     return (
         <Modal animationType="fade" transparent={true} visible={show} onRequestClose={() => setShow(!show)}>
-            <TouchableHighlight onPress={() => setShow(!show)} style={[styles.border, styles.popover, { maxHeight: orientation === 'landscape' ? '70%' : '50%' }]}>
-            <View>
+            <TouchableOpacity onPress={() => setShow(!show)} style={[styles.border, styles.popover, { maxHeight: orientation === 'landscape' ? '75%' : '50%', maxWidth: orientation === 'landscape' ? '50%' : '70%' }]}>
+            <View style={{ height: '100%' }}>
                 <Text style={[styles.header, styles.creatureHeadingH1, styles.gold]}>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}
                     <img src={item.imgUrl} />
                 </Text>
-                <Text>~{'\n'}</Text>
                 <Text style={[styles.basicText, styles.taper]}>
                 { item?.name === 'Empty Weapon Slot' || item?.name === 'Empty Shield Slot' || item?.name === 'Empty Amulet Slot' || item?.name === 'Empty Ring Slot' || item?.name === 'Empty Trinket Slot' ? ( '' ) : 
                 <>
@@ -41,30 +40,30 @@ export default function ItemModal({ item, show, setShow, stalwart, caerenic }) {
                     Crit Damage: <Text style={styles.gold}>{item?.criticalDamage}x</Text> <Text>{'\n'}</Text>
                     Roll Chance: <Text style={styles.gold}>{item?.roll}%</Text> <Text>{'\n'}</Text>
                     { item?.influences && item?.influences?.length > 0 ? ( <>
-                        Influence: <Text style={styles.gold}>{item?.influences?.[0]}</Text><Text>{'\n'}</Text>
+                        Influence: <Text style={styles.gold}>{item?.influences?.[0]}</Text><Text>{'\n'}{'\n'}</Text>
                     </> ) : ( '' ) }
-                    <Text style={{ color: getRarityColor(item?.rarity) }}>
+                    <Text style={{ color: getRarityColor(item?.rarity), fontSize: '1.25em' }}>
                         {item?.rarity}
                     </Text>
-                    { stalwart && (
+                    { stalwart && ( <> {'\n'}{'\n'}
                         <Text style={[styles.basicText, styles.gold]}>
                             Stalwart - You are engaged in combat with your shield raised, adding it to your passive defense. 
                             You receive 50% less poise damage. 
                             You receive 10% less damage. 
                             You cannot dodge or roll.
                         </Text>
-                    ) } 
-                    { caerenic && (
+                    </> ) } 
+                    { caerenic && ( <> {'\n'}{'\n'}
                         <Text style={[styles.basicText, styles.gold]}>
                             Caerenic - You attempt to harnass your caer with your achre, increasing your damage by 15%. 
                             You move 15% faster. 
                             You receive 25% more damage. 
-                        </Text>
-                    ) }
+                        </Text>{'\n'}{'\n'}
+                    </> ) }
                 </> }</Text>
                 <Text style={[styles.basicText, styles.gold, styles.taper]}>{item.gameplay}</Text>
             </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
         </Modal>
     );
 };
