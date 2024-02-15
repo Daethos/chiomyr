@@ -267,7 +267,7 @@ async function createAscean(data: any): Promise<Ascean> {
             gold: 0
         },
         experience: 0,
-        imgUrl: `/src/assets/images/${data.origin}-${data.sex}.jpg`
+        imgUrl: `../assets/images/${data.origin}-${data.sex}.jpg`
     });
     const res = await addAscean(ascean);
     console.log(res, 'Added Ascean to Database');

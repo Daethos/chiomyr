@@ -7,12 +7,15 @@ import Boot from './Boot';
 import Preload from './Preload';
 import Menu from './Menu';
 import Play from './Play';
+import InventoryScene from './InventoryScene';
 
 let scenes: any[] = [];
 scenes.push(Boot);
 scenes.push(Preload);
 scenes.push(Menu);
 scenes.push(Play);
+scenes.push(InventoryScene);
+
 
 export const config = {
     type: Phaser.AUTO,

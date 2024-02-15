@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.1.1",
+    "@hello-pangea/dnd": "^16.5.0",
     "@react-native-community/hooks": "^3.0.0",
     "@types/react": "~18.2.45",
     "expo": "~50.0.5",
@@ -20,11 +21,15 @@
     "phaser-navmesh": "^2.3.1",
     "phaser3-rex-plugins": "^1.60.10",
     "react": "18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "18.2.0",
     "react-native": "0.73.2",
+    "react-native-draggable-flatlist": "^4.0.1",
+    "react-native-draglist": "^3.5.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-svg": "^12.1.1",
     "react-native-web": "~0.19.6",
+    "use-sound": "^4.0.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

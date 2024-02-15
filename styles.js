@@ -29,6 +29,12 @@ export const styles = StyleSheet.create({
         borderRadius: 50,
         transform: 'scale(1.25)'
     },
+    dialogButtonsInner: {
+        fontSize: '0.75em',
+        fontVariant: 'small-caps',
+        outline: 'none',
+        color: 'green'
+    },
     playerCombatUi: {
         position: 'absolute',
         top: 0,
@@ -147,6 +153,9 @@ export const styles = StyleSheet.create({
         // paddingRight: '0.5rem', 
         borderRadius: 25
     },
+    storyInventory: {
+
+    },
     storySaveInventory: {
         position: 'absolute',
         fontFamily: 'Cinzel-Regular',
@@ -187,6 +196,15 @@ export const styles = StyleSheet.create({
         borderLeftWidth: '0.15em',
         zIndex: 1,
 
+    },
+    storyInventoryBag: {
+        position: 'fixed',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        zIndex: 1,
+        height: '100%',
+        width: '100%',
+        margin: 5,
     },
     storyWindows: {
         position: "fixed", 

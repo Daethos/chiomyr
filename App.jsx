@@ -3,10 +3,12 @@ import { Image, TouchableOpacity, SafeAreaView, ScrollView, Text, View, Activity
 import { styles } from './styles';
 import { useEffect, useState } from 'react';
 import AsceanBuilder from './components/AsceanBuilder';
-import { getAsceans, populate } from './assets/db/db';
+import { getAscean, getAsceans, populate, updateAscean } from './assets/db/db';
 import { requireOrigin } from './utility/ascean';
 import { createAscean } from './models/ascean';
+import { getOneRandom } from './models/equipment';
 import AsceanImageCard from './components/AsceanImageCard';
+import { AttributeCompiler } from './utility/attributes';
 import HostScene from './scenes/HostScene';
 
 export const SCREENS = {
@@ -136,6 +138,23 @@ export default function App() {
         create();
     };
 
+    async function freeInventory(asc) {
+        console.log('Getting some free Equipment for my Inventory, level: ', asc.level, '... from the Ascean: ', asc.name, '...');
+        try {
+            const equipment = await getOneRandom(asc.level);
+            console.log('Equipment:', equipment);
+            if (equipment.length === 0) throw new Error('No Equipment found');
+            let dbAscean = await getAscean(asc._id);    
+            if (dbAscean === undefined) throw new Error('No Ascean found');
+            dbAscean.inventory.push(equipment[0]._id);
+            
+            const res = await updateAscean(dbAscean);
+            console.log('Updated Ascean:', res);            
+        } catch (err) {
+            throw new Error(err);
+        };
+    };
+
     async function populateAscean(asc) {
         try {
             const res = await populate(asc);
@@ -205,8 +224,12 @@ export default function App() {
                     <Text style={[styles.basicText, styles.gold]}>Level: {ascean.level}</Text>
                     <Text style={[styles.basicText, styles.gold]}>Experience: {ascean.experience}</Text>
                     <Text>~{'\n'}</Text>
+                    <AttributeCompiler ascean={ascean} />
                     <AsceanImageCard ascean={ascean} weaponOne={ascean.weaponOne} weaponTwo={ascean.weaponTwo} weaponThree={ascean.weaponThree} />
                     <Text>~{'\n'}~{'\n'}</Text>
+                    <TouchableOpacity onPress={() => freeInventory(ascean)} style={[styles.stdInput, styles.corner, { backgroundColor: 'blue' }]}>
+                        <Text style={styles.basicText}>Get Equipment</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => toggle()} style={[styles.stdInput, styles.bottomLeftCorner, { backgroundColor: 'red' }]}>
                         <Text style={styles.basicText}>Delete!!</Text>
                     </TouchableOpacity>

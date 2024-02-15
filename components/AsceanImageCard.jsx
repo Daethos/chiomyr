@@ -6,7 +6,6 @@ import ItemModal from './ItemModal';
 import { AttributeCompiler } from '../utility/attributes';
 
 export default function AsceanImageCard({ ascean, weaponOne, weaponTwo, weaponThree }) { 
-
     const [equipment, setEquipment] = useState(null);
     const [show, setShow] = useState(false);
     function itemStyle(rarity) {
@@ -24,7 +23,7 @@ export default function AsceanImageCard({ ascean, weaponOne, weaponTwo, weaponTh
     };
     return (
         <ScrollView>
-        <AttributeCompiler ascean={ascean} />
+        {/* <AttributeCompiler ascean={ascean} /> */}
         <View style={styles.imageCardGrid}>
             <View style={styles.imageCardLeft}>
                 <Pressable onPress={() =>info(weaponOne)} style={itemStyle(weaponOne.rarity)}>

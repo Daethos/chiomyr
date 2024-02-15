@@ -25,6 +25,7 @@ export default class Play extends Phaser.Scene {
         this.ascean = {};
         this.state = {};
         this.gameState = {};
+        this.inventory = [];
 
         EventEmitter.once('get-ascean', this.asceanOn);
         EventEmitter.once('get-combat-data', this.stateOn);
@@ -179,7 +180,38 @@ export default class Play extends Phaser.Scene {
 
         this.fpsText = this.add.text(window.innerWidth / 2 - 32, window.innerHeight / 1.05, 'FPS: ', { font: '16px Cinzel', fill: '#fdf6d8' });
         this.fpsText.setScrollFactor(0);
+
+        // =========================== Inventory =========================== \\
+
+        // this.inventoryFetch();
+        this.inventoryUpdate();
+        this.scene.launch('InventoryScene', { scene: this });
     };
+
+    // inventoryFetch = () => {
+    //     EventEmitter.once('get-inventory', this.inventoryOn);
+    //     EventEmitter.emit('request-inventory');
+    // };
+
+    inventoryOn = (inventory) => {
+        this.inventory = inventory;
+        this.inventory.forEach(item => {
+            console.log(item, 'Item in inventoryOn')
+            this.player.inventory.addItem(item);
+        });
+    };
+
+    inventoryScene = (inventory) => {
+        if (this.scene.isActive('InventoryScene')) {
+            console.log('Inventory Scene is active')
+            this.scene.stop('InventoryScene');
+        } else {
+            console.log('Inventory Scene is not active')
+            this.scene.launch('InventoryScene', { scene: this });
+            this.player.inventory.refresh(inventory);
+        };
+    };
+    inventoryUpdate = () => EventEmitter.on('update-inventory', this.inventoryScene);
 
     handleJoystickUpdate() {
         var cursorKeys = this.joystick.createCursorKeys();

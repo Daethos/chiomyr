@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
 import CombatUI from '../ui/CombatUI';
-import StoryAscean from '../ui/StoryAscean';
+import StoryAscean, { viewCycleMap } from '../ui/StoryAscean';
 import EventEmitter from "../phaser/EventEmitter";
 import gameManager from "./Game";
 import { asceanCompiler } from '../utility/ascean';
@@ -12,14 +12,11 @@ import { initGame } from '../stores/game';
 import { styles } from '../styles';
 
 // import CombatMouseSettings from '../../../seyr/src/game/ui/CombatMouseSettings';
-// import CombatUI from '../../../seyr/src/game/ui/CombatUI';
 // import EnemyUI from '../../../seyr/src/game/ui/EnemyUI';
 // import PhaserCombatText from '../../../seyr/src/game/ui/PhaserCombatText';
 // import SmallHud from '../../../seyr/src/game/ui/SmallHud';
-// import StoryAscean, { viewCycleMap } from '../../../seyr/src/game/ui/StoryAscean';
 // import StoryTutorial from '../../../seyr/src/game/ui/StoryTutorial';
 // import useGameSounds from '../../../seyr/src/components/GameCompiler/Sounds'; 
-// import * as eqpAPI from '../../../seyr/src/utils/equipmentApi';
 // import { Equipment } from '../../../seyr/src/components/GameCompiler/GameStore';
 // import { CombatData } from '../../../seyr/src/components/GameCompiler/CombatStore';
 // import { LootDropUI } from '../../../seyr/src/game/ui/LootDropUI';
@@ -102,6 +99,7 @@ const HostScene = ({ ascean }) => {
         const update = async () => {
             try {
                 const inventory = await getInventory(ascean._id);
+                EventEmitter('update-inventory', inventory);
                 console.log(inventory, 'Inventory', ascean, 'Ascean');
                 setGameState({
                     ...gameState,
@@ -204,7 +202,7 @@ const HostScene = ({ ascean }) => {
     const gameHud = (e) => {
         e.preventDefault();
         // if (e.shiftKey && (e.key === 'c' || e.key === 'C')) dispatch(setShowDialog(!game.showDialog)); // (e.key === 'v' || e.key === 'V')
-        if (!e.shiftKey && (e.key === 'c' || e.key === 'C')) setGameState({ ...gameState, showPlayer: !gameState.showPlayer });
+        if (!e.shiftKey && (e.key === 'c' || e.key === 'C')) showPlayer();
         if (e.key === 'x' || e.key === 'X') {
             const nextView = viewCycleMap[gameState.asceanViews];
             // if (nextView) dispatch(setAsceanViews(nextView));
@@ -266,6 +264,20 @@ const HostScene = ({ ascean }) => {
         }, [game, pause, ref, timer]);
     };
 
+    const phaserInventory = async () => {
+        try {
+            const inventory = await getInventory(ascean._id);
+            console.log(inventory, 'Inventory');
+            EventEmitter.emit('get-inventory', inventory);
+        } catch (err) {
+            console.log(err.message, 'Error Updating Inventory');
+        };
+    };
+
+    function showPlayer() {
+        setGameState({ ...gameState, showPlayer: !gameState.showPlayer });
+        EventEmitter.emit('update-inventory');
+    };
 
     useKeyEvent('keydown', gameHud); 
     // usePhaserEvent('clear-npc', clearNPC);
@@ -280,6 +292,7 @@ const HostScene = ({ ascean }) => {
     
     // usePhaserEvent('show-dialog', showDialog);
     // usePhaserEvent('interacting-loot', interactingLoot);
+    usePhaserEvent('request-inventory', phaserInventory);
     usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('update-caerenic', (e) => setCombat({ ...combat, isCaerenic: e }));
     usePhaserEvent('update-stalwart', (e) => setCombat({ ...combat, isStalwart: e }));
@@ -303,7 +316,7 @@ const HostScene = ({ ascean }) => {
                 <StoryAscean ascean={ascean} asceanViews={gameState.asceanViews} restartGame={restartGame} asceanState={{}} gameState={gameState} combatState={combat} setGameState={setGameState} />
             ) : ( 
                 <View style={{ position: "absolute", zIndex: 1 }}>
-                    <CombatUI state={combat} staminaPercentage={staminaPercentage} pauseState={gameState.pauseState} stamina={stamina} stealth={false} gameState={gameState} setGameState={setGameState} />
+                    <CombatUI state={combat} staminaPercentage={staminaPercentage} pauseState={gameState.pauseState} stamina={stamina} stealth={false} gameState={gameState} setGameState={setGameState} showPlayer={showPlayer} />
                     {/* { combat.combatEngaged && (
                         <div style={{ position: "absolute", top: "420px", left: "250px", zIndex: 0 }}>
                             <PhaserCombatText />

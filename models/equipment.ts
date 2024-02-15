@@ -118,6 +118,7 @@ async function mutate(equipment: Equipment[], rarity?: string | 'Common'): Promi
         const chance = ['criticalChance', 'physicalPenetration', 'magicalPenetration', 'roll', 'dodge'];
         const damage = ['physicalDamage', 'magicalDamage'];
         const critDamage = ['criticalDamage'];
+        
     
         equipment.forEach(async (item: Equipment) => {
             console.log(item, 'Item?')
@@ -195,13 +196,14 @@ async function mutate(equipment: Equipment[], rarity?: string | 'Common'): Promi
             const res = await addEquipment(item);
             console.log(res, 'Response for adding EQP to DB?');
         });
+
         return equipment;
     } catch (err) {
         console.log(err, 'Error Mutating Equipment');
     };
 };
 
-async function getOneRandom(level: number) {
+async function getOneRandom(level: number = 1): Promise<Equipment[]> {
     try {
         let rarity = determineRarityByLevel(level);
         let type = determineEquipmentType();
@@ -226,9 +228,10 @@ async function getOneRandom(level: number) {
                 type = 'Legs';
             };
         };
-
-        await aggregate(rarity, type, 1) as Equipment[];
-        await mutate(equipment, rarity);
+        console.log(rarity, type, 'Rarity and Type to Randomly Find')
+        equipment = await aggregate(rarity, type, 1) as Equipment[];
+        // await mutate(equipment, rarity);
+        console.log(equipment, 'Random Equipment Mutated');
         return equipment;
     } catch (err) {
         console.log(err, 'Error Getting One Equipment')
@@ -290,11 +293,11 @@ async function aggregate(rarity: string, type: string, size: number, name?: stri
         };
 
         for (let i = 0; i < size; i++) {
-            console.log('Fetcher Called: ', i);
             fetcher();
             total.push(equipment);
         };
-
+        console.log(total, 'Total Equipment Aggregated');
+        total = await mutate(total, rarity);
         return total;
 
     } catch (err: any) {

@@ -33,7 +33,7 @@ export interface Game {
 export const initGame: Game = {
     player: {},
     dialog: {},
-    asceanViews: 'Settings',
+    asceanViews: 'Inventory',
 
     currentGame: false,
     gameTimer: 0,

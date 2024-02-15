@@ -28,6 +28,11 @@ export const getInventory = async (id) => {
     return populated;
 };
 
+export const getInventoryIds = async (id) => {
+    const ascean = await db.collection(ASCEANS).doc({ _id: id }).get();
+    return ascean.inventory;
+};
+
 export const populate = async (ascean) => {
     const weaponOne = await db.collection(EQUIPMENT).doc({ _id: ascean.weaponOne }).get();
     const weaponTwo = await db.collection(EQUIPMENT).doc({ _id: ascean.weaponTwo }).get();

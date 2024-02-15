@@ -9,7 +9,7 @@ import { Combat } from '../stores/combat';
 // import PhaserEffects from './PhaserEffects';
 import EventEmitter from '../phaser/EventEmitter';
 
-const CombatUI = ({ state, staminaPercentage, pauseState, stamina, stealth, gameState, setGameState }) => {
+const CombatUI = ({ state, staminaPercentage, pauseState, stamina, stealth, gameState, setGameState, showPlayer }) => {
     const [show, setShow] = useState(false);
     // const dispatch = useDispatch();
     // const stealth = useSelector((state: any) => state.game.stealth);
@@ -24,10 +24,6 @@ const CombatUI = ({ state, staminaPercentage, pauseState, stamina, stealth, game
     useEffect(() => {
         console.log(state.weapons, 'Weapons in CombatUI')
     }, [state.weapons]);
-
-    function showPlayer() {
-        setGameState({ ...gameState, showPlayer: !gameState.showPlayer });
-    };
 
     // useEffect(() => {
     //     let instantTimer;
