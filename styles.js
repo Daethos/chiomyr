@@ -123,10 +123,11 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         top: 3,
         left: 10,
-        // right: 15,
         fontFamily: 'Cinzel-Regular',
+        fontSize: '1.05em',
         textAlign: 'center',
         fontWeight: 600,
+        letterSpacing: '1px',
         color: '#fdf6d8',
         backgroundColor: 'black',
         padding: '0.35em',
@@ -138,6 +139,39 @@ export const styles = StyleSheet.create({
         borderRightColor: '#fdf6d8',
         borderLeftColor: '#fdf6d8',
         borderBottomColor: '#fdf6d8',
+    },
+    healthbar: {
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
+        left: '15%',
+        width: '70%',
+        borderRadius: 25, 
+        overflow: 'hidden', 
+        borderBlockColor: 'purple', 
+        borderBlockWidth: '0.2em', 
+        borderBlockStyle: 'solid',
+        marginTop: 5,
+        marginBottom: 10,
+        
+    },
+    healthbarBorder: {
+        margin: 5,
+        borderTopColor: '#fdf6d8', 
+        borderTopWidth: '#fdf6d8',
+        borderBottomColor: '#fdf6d8', 
+        borderBottomWidth: '0.15em', 
+        borderLeftColor: '#fdf6d8', 
+        borderLeftWidth: '0.15em', 
+        borderRightColor: '#fdf6d8', 
+        borderRightWidth: '0.15em',
+    },
+    healthbarText: {
+        fontFamily: 'Cinzel-Regular',
+        textAlign: 'center',
+        color: '#fdf6d8',
+        textShadowColor: 'black',
+        textShadowOffset: { width: 0.5, height: 0.5 },
     },
     storySetting: {
         position: "absolute", 
@@ -154,7 +188,9 @@ export const styles = StyleSheet.create({
         borderRadius: 25
     },
     storyInventory: {
-
+        margin: 5,
+        height: 50,
+        width: 50,
     },
     storySaveInventory: {
         position: 'absolute',
@@ -198,13 +234,14 @@ export const styles = StyleSheet.create({
 
     },
     storyInventoryBag: {
-        position: 'fixed',
+        position: 'absolute',
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
         zIndex: 1,
         height: '100%',
         width: '100%',
-        margin: 5,
+        // margin: 5,
+        padding: 5,
     },
     storyWindows: {
         position: "fixed", 
@@ -214,6 +251,7 @@ export const styles = StyleSheet.create({
     },
     storyWindow: {
         position: 'absolute',
+        top: 40,
         fontFamily: 'Cinzel-Regular',
         color: '#fdf6d8',
         fontSize: '1em',

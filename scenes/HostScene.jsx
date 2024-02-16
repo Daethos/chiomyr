@@ -6,7 +6,7 @@ import EventEmitter from "../phaser/EventEmitter";
 import gameManager from "./Game";
 import { asceanCompiler } from '../utility/ascean';
 import { fetchEnemy } from '../utility/enemy';
-import { getInventory } from '../assets/db/db';
+import { getAscean, getInventory, populate } from '../assets/db/db';
 import { initCombat } from "../stores/combat";
 import { initGame } from '../stores/game';
 import { styles } from '../styles';
@@ -41,7 +41,7 @@ function useKeyEvent(event, callback) {
     }, [event, callback]);
 };
 
-const HostScene = ({ ascean }) => {
+const HostScene = ({ ascean, setAscean }) => {
     const gameRef = useRef(null); 
     const [combat, setCombat] = useState(initCombat);
     const [gameState, setGameState] = useState(initGame);
@@ -62,17 +62,20 @@ const HostScene = ({ ascean }) => {
         console.log(gameState, 'GameState');
     }, [gameState]);
 
-    useState(() => {
-        console.log(combat, 'Combat');
-    }, [combat]);
-
     useEffect(() => {
         createGame();
-    }, [ascean._id]);
+    }, [ascean._id]); 
 
     useEffect(() => {
+        console.log(combat, 'Combat');
         updateCombatListener(combat);
     }, [combat]); 
+
+    function compile() {
+        console.log('Recompiling:', ascean.name);
+        inventoryPopulate();
+        statPopulate();
+    };
     
     const createGame = () => {
         const res = asceanCompiler(ascean);
@@ -91,16 +94,44 @@ const HostScene = ({ ascean }) => {
             playerDamageType: res.combatWeaponOne.damageType[0]
         });
         setStamina(res.attributes.stamina); 
-        inventoryUpdate();
+        inventoryPopulate();
         gameRef.current = gameManager.createGame(ascean._id);
     };
 
-    function inventoryUpdate() {
+    async function statPopulate() {
+        try {
+            const res = await getAscean(ascean._id);
+            console.log(res, 'Ascean');
+            const pop = await populate(res);
+            console.log(pop, 'Populated');
+            const hyd = asceanCompiler(pop);
+            console.log(hyd, 'Hydrated');
+            setAscean(hyd.ascean);
+            setCombat({
+                ...combat,
+                player: hyd.ascean,
+                playerHealth: hyd.ascean.health.max,
+                newPlayerHealth: hyd.ascean.health.current,
+                weapons: [hyd.combatWeaponOne, hyd.combatWeaponTwo, hyd.combatWeaponThree],
+                weaponOne: hyd.combatWeaponOne,
+                weaponTwo: hyd.combatWeaponTwo,
+                weaponThree: hyd.combatWeaponThree,
+                playerAttributes: hyd.attributes,
+                playerDefense: hyd.defense,
+                playerDamageType: hyd.combatWeaponOne.damageType[0]
+            });
+        } catch (err) {
+            console.log(err.message, 'Error Populating Ascean');
+        };
+    };
+
+    const inventoryPopulate = () => {
         const update = async () => {
             try {
+                console.log('Updating Inventory');
                 const inventory = await getInventory(ascean._id);
-                EventEmitter('update-inventory', inventory);
-                console.log(inventory, 'Inventory', ascean, 'Ascean');
+                console.log(inventory, 'Inventory');
+                // EventEmitter.emit('update-inventory', inventory);
                 setGameState({
                     ...gameState,
                     ascean: ascean, 
@@ -221,20 +252,17 @@ const HostScene = ({ ascean }) => {
 
     // const deleteEquipment = async (eqp) => await eqpAPI.deleteEquipment(eqp);
     // const interactingLoot = async (e) => dispatch(setShowLoot(e)); 
-    const launchGame = async (e) => {
-        // dispatch(setCurrentGame(e));
-        // if (!gameState.currentGame) dispatch(setCurrentGame(e));
-        setGameState({ ...gameState, currentGame: e});
-    };
-    const sendAscean = async () => EventEmitter.emit('get-ascean', combat.player);
-    const sendCombatData = async () => EventEmitter.emit('get-combat-data', combat);
     // // const sendDispatch = async () => EventEmitter.emit('get-dispatch', dispatch);
-    const sendEnemyData = async () => EventEmitter.emit('get-enemy', combat.computer);
-    const sendGameData = async () => EventEmitter.emit('get-game-data', gameState);
     // const sendPhaserData = async () => EventEmitter.emit('get-phaser-data', phaser);
     // const showDialog = async (e) => dispatch(setDialogTag(e));
-    const updateCombatListener = (data) => EventEmitter.emit('update-combat-data', data); // Was Async
+    const launchGame = async (e) => setGameState({ ...gameState, currentGame: e});
     
+    const sendAscean = async () => EventEmitter.emit('get-ascean', combat.player);
+    const sendCombatData = async () => EventEmitter.emit('get-combat-data', combat);
+    const sendEnemyData = async () => EventEmitter.emit('get-enemy', combat.computer);
+    const sendGameData = async () => EventEmitter.emit('get-game-data', gameState);
+
+    const updateCombatListener = (data) => EventEmitter.emit('update-combat-data', data); // Was Async
     const updateCombatTimer = (e) => setCombat({...combat, combatTimer: e}); 
     const updateStamina = (e) => setStaminaPercentage(staminaPercentage - e <= 0 ? 0 : staminaPercentage - e);
 
@@ -264,7 +292,7 @@ const HostScene = ({ ascean }) => {
         }, [game, pause, ref, timer]);
     };
 
-    const phaserInventory = async () => {
+    async function phaserInventory() {
         try {
             const inventory = await getInventory(ascean._id);
             console.log(inventory, 'Inventory');
@@ -274,9 +302,31 @@ const HostScene = ({ ascean }) => {
         };
     };
 
+    async function saveInventory(id, inventory) {
+        try {
+            const newInventory = inventory.map((item) => item._id);
+            // await updateInventory(id, newInventory);
+        } catch (err) {
+            console.log(err.message, 'Error Saving Inventory');
+        };
+    };
+
+    async function refreshInventory(freshInventory) {
+        try {
+            console.log(freshInventory, 'Fresh Inventory');
+            setGameState({
+                ...gameState,
+                inventory: freshInventory
+            });
+        } catch (err) {
+            console.log(err.message, 'Error Refreshing Inventory');
+        };
+    };
+
     function showPlayer() {
         setGameState({ ...gameState, showPlayer: !gameState.showPlayer });
-        EventEmitter.emit('update-inventory');
+        // phaserInventory();
+        // EventEmitter.emit('update-inventory', gameState.inventory);
     };
 
     useKeyEvent('keydown', gameHud); 
@@ -289,6 +339,10 @@ const HostScene = ({ ascean }) => {
     usePhaserEvent('request-enemy', sendEnemyData);
     usePhaserEvent('request-combat-data', sendCombatData);
     usePhaserEvent('request-game-data', sendGameData); 
+
+    usePhaserEvent('update-ascean-request', statPopulate);
+    usePhaserEvent('update-full-request', compile);
+    usePhaserEvent('update-inventory-request', inventoryPopulate);
     
     // usePhaserEvent('show-dialog', showDialog);
     // usePhaserEvent('interacting-loot', interactingLoot);
@@ -299,6 +353,7 @@ const HostScene = ({ ascean }) => {
     // usePhaserEvent('stealth', (e) => dispatch(setStealth(e)));
     usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-combat-timer', updateCombatTimer);
+    usePhaserEvent('refresh-inventory', refreshInventory);
     // usePhaserEvent('update-sound', soundEffects);
 
 
@@ -313,7 +368,7 @@ const HostScene = ({ ascean }) => {
                 <CombatMouseSettings damageType={combat.weapons[0].damage_type} weapons={combat.weapons.filter((weapon) => weapon?.name !== 'Empty Weapon Slot')} />
             ) } */}
             { gameState.showPlayer ? (  
-                <StoryAscean ascean={ascean} asceanViews={gameState.asceanViews} restartGame={restartGame} asceanState={{}} gameState={gameState} combatState={combat} setGameState={setGameState} />
+                <StoryAscean ascean={ascean} setAscean={setAscean} asceanViews={gameState.asceanViews} restartGame={restartGame} asceanState={{}} gameState={gameState} combatState={combat} setGameState={setGameState} />
             ) : ( 
                 <View style={{ position: "absolute", zIndex: 1 }}>
                     <CombatUI state={combat} staminaPercentage={staminaPercentage} pauseState={gameState.pauseState} stamina={stamina} stealth={false} gameState={gameState} setGameState={setGameState} showPlayer={showPlayer} />

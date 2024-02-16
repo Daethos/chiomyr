@@ -184,8 +184,8 @@ export default class Play extends Phaser.Scene {
         // =========================== Inventory =========================== \\
 
         // this.inventoryFetch();
-        this.inventoryUpdate();
-        this.scene.launch('InventoryScene', { scene: this });
+        // this.inventoryUpdate();
+        // this.scene.launch('InventoryScene', { scene: this });
     };
 
     // inventoryFetch = () => {
@@ -195,18 +195,15 @@ export default class Play extends Phaser.Scene {
 
     inventoryOn = (inventory) => {
         this.inventory = inventory;
-        this.inventory.forEach(item => {
-            console.log(item, 'Item in inventoryOn')
-            this.player.inventory.addItem(item);
-        });
+        this.player.inventory.refresh(inventory);
     };
 
     inventoryScene = (inventory) => {
         if (this.scene.isActive('InventoryScene')) {
-            console.log('Inventory Scene is active')
+            console.log('Inventory Scene is active', inventory)
             this.scene.stop('InventoryScene');
         } else {
-            console.log('Inventory Scene is not active')
+            console.log('Inventory Scene is not active', inventory)
             this.scene.launch('InventoryScene', { scene: this });
             this.player.inventory.refresh(inventory);
         };

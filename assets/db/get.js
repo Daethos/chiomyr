@@ -69,7 +69,7 @@ export default function get(options = { keys: false }) {
                     console.log('No document found.');
                 } else {
                     document = collection[0];
-                    console.log(`Got document: ${document} from collection: ${name} by criteria: ${criteria}`);
+                    // console.log(`Got document: ${document} from collection: ${name} by criteria: ${criteria}`);
                     reset.call(this);    
                     return document;
                 };
@@ -82,7 +82,7 @@ export default function get(options = { keys: false }) {
                     console.log('No document found.');
                 } else {
                     document = value;
-                    console.log(`Got document: ${document} from collection: ${name} by key: ${criteria}`);
+                    // console.log(`Got document: ${document} from col/lection: ${name} by key: ${criteria}`);
                     reset.call(this);
                     return document;
                 };

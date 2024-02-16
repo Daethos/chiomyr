@@ -10,6 +10,7 @@ import { getOneRandom } from './models/equipment';
 import AsceanImageCard from './components/AsceanImageCard';
 import { AttributeCompiler } from './utility/attributes';
 import HostScene from './scenes/HostScene';
+import { useDeviceOrientation } from '@react-native-community/hooks';
 
 export const SCREENS = {
     'CHARACTER': {
@@ -92,7 +93,7 @@ export default function App() {
         kyosir: 13, // 13 || 11
         hardcore: false,
     });
-
+    const orientation = useDeviceOrientation();
     const toggle = () => {
         setNewCharacter(!newCharacter);
     };
@@ -183,7 +184,7 @@ export default function App() {
     return (
         <SafeAreaView style={styles.container}>
         { gameRunning ? (
-                <HostScene ascean={ascean} />            
+                <HostScene ascean={ascean} setAscean={setAscean} />            
         ) : newCharacter === true ? ( <>
                 <AsceanBuilder screen={screen} newAscean={newAscean} setNewAscean={setNewAscean} />
                 {/* <Text style={[styles.topLeftCorner, styles.title]}>The Ascean <Text style={styles.superscript}>TM</Text></Text>  */}
@@ -196,7 +197,7 @@ export default function App() {
             <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center'}} style={styles.scrollView}>
                 {asceans.map((asc, idx) => { 
                     const newPic = requireOrigin(asc.origin, asc.sex);
-                    return <View key={idx} style={[styles.border, { width: '85%', marginTop: '1em' }]}>
+                    return <View key={idx} style={[styles.border, { width: orientation ? '70%' : '85%', marginTop: '1em' }]}>
                         { ascean ? ( <>
                             <Text style={[styles.header, styles.creatureHeadingH1]}>{asc.name}</Text>
                             <TouchableOpacity onPress={() => populateAscean(asc)} style={[styles.stdInput, styles.border]}>
@@ -215,7 +216,7 @@ export default function App() {
                         </> )}
                     </View> 
                 })}
-                {ascean ? <View style={[styles.border, { width: '85%', overflow: 'scroll' }]}>
+                {ascean ? <View style={[styles.border, { width: orientation ? '70%' : '85%', overflow: 'scroll' }]}>
                     <Text style={[styles.header, styles.creatureHeadingH1]}>{ascean.name}</Text>
                     <Text style={[styles.creatureHeadingH2, ascean.description.toString().length > 45 ? styles.wrap : {}]}>{ascean.description}</Text>
                     <Text>~{'\n'}</Text>

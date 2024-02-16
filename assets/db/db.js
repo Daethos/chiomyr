@@ -115,3 +115,57 @@ export const addEquipment = async (equipment) => await db.collection(EQUIPMENT).
 export const getEquipment = async (id) => await db.collection(EQUIPMENT).doc({ _id: id }).get();
 export const getEquipmentByName = async (name) => await db.collection(EQUIPMENT).doc({ name: name }).get();
 export const getEquipmentByRarity = async (rarity) => await db.collection(EQUIPMENT).doc({ rarity: rarity }).get();
+
+export const equipmentSwap = async (inventoryId, editState, id) => {
+    try {
+        let ascean = await db.collection(ASCEANS).doc({ _id: id }).get();
+        const keyToUpdate = Object.keys(editState).find(key => {
+            return typeof editState[key] !== '' && key === editState.inventoryType;
+        });
+        console.log(keyToUpdate, 'KeyToUpdate');
+        // const itemType = keyToUpdate.replace('new', '').charAt(0).toUpperCase() + keyToUpdate.slice(1);
+        // console.log(itemType, 'ItemType');
+
+        // Getting current worn item, converting to new item
+        const currentItem = ascean[keyToUpdate];
+        console.log(currentItem, 'CurrentItem');
+        
+        ascean[keyToUpdate] = inventoryId;
+
+        // If the current item is not default, it is added to the inventory
+        
+        if (!(currentItem.rarity === 'Default')) {
+            console.log('CurrentItem is not default, it keeps existing.')
+            ascean.inventory.push(currentItem);
+            // ascean.inventory = [...ascean.inventory, currentItem];
+            isItAdded = (ascean.inventory.includes(currentItem));
+            console.log(isItAdded, 'IsItAdded');
+        } else { // Default rarities are deleted from the database
+            console.log('CurrentItem is default, it is deleted.')
+            await db.collection(EQUIPMENT).doc({ _id: currentItem }).delete();
+        };
+
+        // Removing the new item from the inventory
+        const oldItemIndex = ascean.inventory.indexOf(inventoryId);
+        console.log(oldItemIndex, 'OldItemIndex');
+        ascean.inventory.splice(oldItemIndex, 1);
+        await db.collection(ASCEANS).doc({ _id: id }).update(ascean);
+        return ascean;
+    } catch (error) {
+        console.error(error);
+    };
+};
+
+export const equipmentRemove = async (data) => {
+    try {
+        let ascean = await db.collection(ASCEANS).doc({ _id: data._id }).get();
+        const itemId = data.inventory;
+        const itemIndex = ascean.inventory.indexOf(itemId);
+        ascean.inventory.splice(itemIndex, 1);
+        await db.collection(ASCEANS).doc({ _id: data._id }).update(ascean);
+        await db.collection(EQUIPMENT).doc({ _id: itemId }).delete();
+        return ascean.inventory;
+    } catch (error) {
+        console.error(error);
+    };
+};

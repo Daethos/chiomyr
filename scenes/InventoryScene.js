@@ -37,6 +37,7 @@ export default class InventoryScene extends Phaser.Scene {
     };
 
     refresh() { 
+        console.log('refreshing inventory')
         this.inventorySlots.forEach(s => this.destroyInventorySlot(s));
         this.inventorySlots = [];
 
@@ -48,13 +49,22 @@ export default class InventoryScene extends Phaser.Scene {
             y += this.yOffset;
             let inventorySlot = this.add.sprite(x, y, 'target');
             inventorySlot.setScale(this.uiScale);
-            inventorySlot.depth = -1;
+            // let inventorySlot = this.add.graphics();
+            // inventorySlot.fillStyle(0x000000, 1);
+            // inventorySlot.slice(x, y, 24, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(360), true);
+            // inventorySlot.fillPath();
+            inventorySlot.depth = -3;
             inventorySlot.background = this.add.graphics();
             inventorySlot.background.fillStyle(0x000000, 1);
             inventorySlot.background.slice(x, y, 24, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(360), true);
             inventorySlot.background.fillPath();
             inventorySlot.background.depth = -2;
             inventorySlot.setInteractive();
+            // inventorySlot.on('pointerdown', pointer => {
+            //     console.log(`Clicked: ${i}`);
+            //     this.inventory.selected = i;
+            //     this.updateSelected();
+            // });
             inventorySlot.on('pointerover', pointer => {
                 console.log(`Pointer Over: ${i}`);
                 this.hoverIndex = i;
@@ -62,7 +72,13 @@ export default class InventoryScene extends Phaser.Scene {
             if (item) {
                 // Dragging
                 // this.input.setDraggable(inventorySlot);
-            
+                console.log('item refresh inventoryScene');
+                inventorySlot.border = this.add.graphics();
+                inventorySlot.border.lineStyle(2, 0xffff00, 1);
+                inventorySlot.border.slice(x, y, 24, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(360), true);
+                inventorySlot.border.strokePath();
+                inventorySlot.border.depth = -3;
+
                 inventorySlot.item = this.add.sprite(inventorySlot.x, inventorySlot.y - this.tileSize / 12, this.inventoryImage(item));
                 inventorySlot.item.depth = 3;
                 // Dragging
@@ -96,7 +112,7 @@ export default class InventoryScene extends Phaser.Scene {
         // Dragging
         this.input.setTopOnly(false);
         this.input.on('dragstart', () => {
-            // console.log('Drag Starting');
+            console.log('Drag Starting', this.startIndex,this.hoverIndex);
             this.startIndex = this.hoverIndex;
             // this.inventorySlots[this.startIndex].quantityText.destroy();
         });
@@ -105,7 +121,7 @@ export default class InventoryScene extends Phaser.Scene {
             gameObject.y = dragY; 
         });
         this.input.on('dragend', () => {
-            this.inventory.moveItem(this.startIndex, this.hoverIndex)
+            this.inventory.moveItem(this.startIndex, this.hoverIndex);
             this.refresh();
         });
         this.refresh();

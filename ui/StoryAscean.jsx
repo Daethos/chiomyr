@@ -10,8 +10,10 @@ import { Combat } from '../stores/combat';
 import InventoryPouch from './InventoryPouch';
 import Inventory from './Inventory';
 import Draggable from './Draggable';
+import EventEmitter from '../phaser/EventEmitter';
+import HealthBar from './HealthBar';
+import ExperienceBar from './ExperienceBar';
 
-// import StoryHealthBar from './StoryHealthBar';
 // import LevelUpModal from '../../components/GameCompiler/LevelUpModal';
 // import ExperienceBar from '../../components/GameCompiler/ExperienceBar';
 // import PhaserInventoryBag from './PhaserInventoryBag';
@@ -43,11 +45,7 @@ const SETTINGS = {
 };
 
 
-const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState, combatState, setGameState }) => {
-    // const dispatch = useDispatch();
-    // const asceanState = useSelector((state) => state.game.asceanState);
-    // const gameState = useSelector((state) => state.game);
-    // const state = useSelector((state) => state.combat) as Combat;
+const StoryAscean = ({ ascean, setAscean, asceanViews, restartGame, asceanState, gameState, combatState, setGameState }) => {
     const [savingInventory, setSavingInventory] = useState(false);
     const [currentSetting, setCurrentSetting] = useState('Control');
     const [currentCharacter, setCurrentCharacter] = useState('Statistics');
@@ -55,13 +53,6 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
     const [dragAndDropInventory, setDragAndDropInventory] = useState(gameState.inventory);
     const [highlighted, setHighlighted] = useState({ item: null, comparing: false });
     // const [show, setShow] = useState(false);
-
-    useEffect(() => {
-        console.log(ascean, 'Ascean');
-        console.log(asceanState, 'AsceanState');
-        console.log(gameState, 'GameState');
-        console.log(combatState, 'CombatState');
-    }, []);
 
     // useEffect(() => {
     //     playerTraits();
@@ -71,10 +62,14 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
     //     if (ascean.tutorial.firstInventory && gameState.inventory.length && asceanViews === 'Inventory') dispatch(setTutorialContent('firstInventory'));
     // }, [ascean.tutorial, asceanViews, dispatch]);
 
-    // useEffect(() => {
-    //     setDragAndDropInventory(gameState.inventory);
-    //     checkHighlight();
-    // }, [gameState.inventory]);
+    useEffect(() => {
+        setDragAndDropInventory(gameState.inventory);
+        checkHighlight();
+    }, [gameState.inventory]);
+
+    useEffect(() => {
+        EventEmitter.emit('refresh-inventory', dragAndDropInventory);
+    }, [dragAndDropInventory]);
 
     const checkHighlight = () => {
         if (highlighted?.item) {
@@ -379,20 +374,24 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
                 </select>
             </Text>
         </> ) : ( '' ) }
-        <View style={[styles.storyWindow, { top: 35, left: 10 }]}>
+        <View style={[styles.storyWindow, { left: 10 }]}>
                 {/* { ascean.experience === ascean.level * 1000 ? (
                     <LevelUpModal asceanState={asceanState} />
                 ) : ( '' ) }  */}
-                <Text style={{ textAlign: 'center', color: "gold", paddingTop: '0.5em' }}>
+                <Text style={{ textAlign: 'center', color: "gold", paddingTop: '0.5em', margin: 5 }}>
                     {combatState.player.name}
                 </Text>
-                <View style={{ marginBottom: "15%" }}>
-                    {/* <StoryHealthBar totalPlayerHealth={combatState.playerHealth} newPlayerHealth={combatState.newPlayerHealth} /> */}
+                <View style={{ marginBottom: '10%' }}>
+                    <HealthBar totalPlayerHealth={combatState.playerHealth} newPlayerHealth={combatState.newPlayerHealth} />
                 </View>
-                <AsceanImageCard ascean={ascean} weaponOne={combatState.weapons[0]} weaponTwo={combatState.weapons[1]} weaponThree={combatState.weapons[2]} />
-                {/* <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} /> */}
+                <View>
+                    <AsceanImageCard ascean={ascean} weaponOne={combatState.weapons[0]} weaponTwo={combatState.weapons[1]} weaponThree={combatState.weapons[2]} />
+                </View>
+                <View>
+                    <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} />
+                </View>
         </View>
-        <View style={[styles.storyWindow, { top: 35, left: 280 }]}>
+        <View style={[styles.storyWindow, { left: 280 }]}>
             { asceanViews === VIEWS.CHARACTER ? (
                 <View>
                     <Text>{'\n'}</Text>
@@ -418,14 +417,7 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
                 </> 
             ) : asceanViews === VIEWS.SETTINGS ? (
                 <>
-                <Text style={{ textAlign: 'center', color: "gold", paddingTop: '0.5em' }}>
-                    {combatState.player.name}
-                </Text>
-                <View style={{ marginBottom: "15%" }}>
-                    {/* <StoryHealthBar totalPlayerHealth={combatState.playerHealth} newPlayerHealth={combatState.newPlayerHealth} /> */}
-                </View>
-                <AsceanImageCard ascean={ascean} weaponOne={combatState.weapons[0]} weaponTwo={combatState.weapons[1]} weaponThree={combatState.weapons[2]} />
-
+                    <Text style={[styles.basicText, styles.center]}>Window 2 - Settings</Text>
                     {/* <Text style={styles.gold}>
                         Gameplay Controls [Window 2]
                         <TouchableOpacity onPress={saveGameSettings} style={{ position: 'absolute' }}>
@@ -479,10 +471,10 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
                 </>
             ) : null }
         </View>
-        <View style={[styles.storyWindow, { top: 35, left: 550 }]}>
+        <View style={[styles.storyWindow, { left: 550 }]}>
             { asceanViews === VIEWS.CHARACTER ? (
-                <Text style={{ maxHeight: "100%" }}> 
-                    Character View
+                <Text style={[styles.basicText, styles.center]}> 
+                   Window 3 - Character
                     {/* {createCharacterInfo(currentCharacter)} */}
                 </Text>
             ) : asceanViews === VIEWS.INVENTORY ? ( 
@@ -495,7 +487,7 @@ const StoryAscean = ({ ascean, asceanViews, restartGame, asceanState, gameState,
                 </View>
             ) : null }
         </View>
-        <TouchableOpacity style={[styles.stdInput, styles.corner, { transform: 'scale(0.75)', marginTop: '-0.5%', right: '-1%' }]} onPress={(() => setGameState({...gameState, showPlayer: !gameState.showPlayer}))}>
+        <TouchableOpacity style={[styles.stdInput, styles.corner, { transform: 'scale(0.75)', marginTop: '-0.25%', right: '-1%' }]} onPress={(() => setGameState({...gameState, showPlayer: !gameState.showPlayer}))}>
             <Text style={{ color: '#fdf6d8' }}>X</Text>
         </TouchableOpacity>
         </View>

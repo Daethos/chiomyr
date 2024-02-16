@@ -35,6 +35,7 @@ export default class Inventory {
     addItem(item) {
         let existingKey = Object.keys(this.items).find(key => this.items[key]._id === item._id);
         if (!existingKey) {
+            console.log('adding item to inventory');
             for (let i = 0; i < this.maxColumns * this.maxRows; i++) {
                 let existingItem = this.items[i];
                 if (!existingItem) {
@@ -59,9 +60,17 @@ export default class Inventory {
     };
 
     moveItem(start, end) {
-        if (start === end || this.items[end]) return;
-        this.items[end] = this.items[start];
-        delete this.items[start];
+        if (start === end) return; // || this.items[end]
+        if (this.items[end]) {
+            console.log('swapping items')
+            let temp = this.items[end];
+            this.items[end] = this.items[start];
+            this.items[start] = temp;
+        } else {
+            console.log('moving item to new slot')
+            this.items[end] = this.items[start];
+            delete this.items[start];
+        };
         this.broadcast();
     };
 

@@ -11,7 +11,7 @@ export default function ItemModal({ item, show, setShow, stalwart, caerenic }) {
     const orientation = useDeviceOrientation();
     return (
         <Modal animationType="fade" transparent={true} visible={show} onRequestClose={() => setShow(!show)}>
-            <TouchableOpacity onPress={() => setShow(!show)} style={[styles.border, styles.popover, { maxHeight: orientation === 'landscape' ? '75%' : '50%', maxWidth: orientation === 'landscape' ? '50%' : '70%' }]}>
+            <TouchableOpacity onPress={() => setShow(!show)} style={[styles.border, styles.popover, { maxHeight: orientation === 'landscape' ? '75%' : '50%', maxWidth: orientation === 'landscape' ? '35%' : '70%' }]}>
             <View style={{ height: '100%' }}>
                 <Text style={[styles.header, styles.creatureHeadingH1, styles.gold]}>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}
                     <img src={item.imgUrl} />

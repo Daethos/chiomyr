@@ -110,7 +110,6 @@ class Particle {
 
 export default class ParticleManager extends Phaser.Scene { 
     static preload(scene) {
-        console.log(scene, "scene in particle manager PRELOAD")
         // scene.load.image('arrow_effect', process.env.PUBLIC_URL + '/images/arrow_effect.png');
         scene.load.atlas('arrow_effect', '../assets/gui/arrow_effect.png', '../assets/gui/arrow_effect_atlas.json');
         scene.load.animation('arrow_anim', '../assets/gui/arrow_anim.json');    

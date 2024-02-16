@@ -56,7 +56,7 @@ export default class Player extends Entity {
         // const spriteName = scene?.state?.player?.weaponOne.imgUrl.split('/')[3].split('.')[0];
         const spriteName = this.imgSprite(scene?.state?.player?.weaponOne);
         this.ascean = scene.state.player;
-        this.inventory = new Inventory();
+        // this.inventory = new Inventory();
 
         this.playerID = scene.state.player._id;
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteName);
