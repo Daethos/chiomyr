@@ -332,7 +332,6 @@ const StoryAscean = ({ ascean, setAscean, asceanViews, restartGame, asceanState,
 
     function setNextView() {
         const nextView = viewCycleMap[gameState.asceanViews];
-        // if (nextView) dispatch(setAsceanViews(nextView));
         if (nextView) setGameState({ ...gameState, asceanViews: nextView });
     };
 

@@ -325,8 +325,6 @@ const HostScene = ({ ascean, setAscean }) => {
 
     function showPlayer() {
         setGameState({ ...gameState, showPlayer: !gameState.showPlayer });
-        // phaserInventory();
-        // EventEmitter.emit('update-inventory', gameState.inventory);
     };
 
     useKeyEvent('keydown', gameHud); 
